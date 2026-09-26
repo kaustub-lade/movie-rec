@@ -156,14 +156,14 @@ Recommended deployment options:
 
 ### Render deployment
 
-This repository includes `render.yaml`, which configures Render to install the dependencies, import the MovieLens dataset, and run Streamlit on Render's assigned port.
+This repository includes `render.yaml`, which configures Render to install the dependencies, import the MovieLens dataset during startup, and run Streamlit on Render's assigned port.
 
 1. Create a MongoDB Atlas cluster.
 2. Create a database user and copy the Atlas connection string. Replace the password placeholder with the real password and URL-encode special characters in it.
 3. In Atlas, add Render's outbound IP range to Network Access. For a quick test, `0.0.0.0/0` allows access from all IPs, but a restricted production network is preferable.
 4. In Render, choose **New > Blueprint**, connect the `kaustub-lade/movie-rec` GitHub repository, and apply `render.yaml`.
 5. Set the secret `MONGODB_URI` environment variable in Render to the Atlas connection string. `DB_NAME` is already set to `movie_recommender`.
-6. Deploy. The pre-deploy command runs `python -m scripts.load_data` and imports the CSV dataset into Atlas. It is idempotent, so later deploys do not create duplicates.
+6. Deploy. The startup command runs `python -m scripts.load_data` and imports the CSV dataset into Atlas before starting Streamlit. It is idempotent, so restarts and later deploys do not create duplicates.
 7. Open the Render service URL. Render checks the Streamlit health endpoint at `/_stcore/health`.
 
 Do not set `MONGODB_URI` to `mongodb://localhost:27017/` on Render; that points to the Render container, not your computer.
