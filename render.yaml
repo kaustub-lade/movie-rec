@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: movie-recommender
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    preDeployCommand: python -m scripts.load_data
+    startCommand: streamlit run main.py --server.address 0.0.0.0 --server.port $PORT --server.headless true
+    healthCheckPath: /_stcore/health
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: DB_NAME
+        value: movie_recommender
+      - key: MONGODB_TIMEOUT_MS
+        value: "10000"
+      - key: DATA_DIR
+        value: data
