@@ -54,6 +54,15 @@ class DatasetError(RuntimeError):
     """Raised when the dataset cannot be downloaded, extracted or parsed."""
 
 
+def _mask_uri(uri: str) -> str:
+    """Hide credentials before writing a MongoDB URI to logs."""
+    if "@" not in uri:
+        return uri
+    scheme, separator, rest = uri.partition("://")
+    _, _, host = rest.partition("@")
+    return f"{scheme}{separator}***:***@{host}"
+
+
 def _human_bytes(size: float) -> str:
     """Format a byte count for the progress log."""
     for unit in ("B", "KB", "MB", "GB"):
@@ -382,7 +391,7 @@ def load(uri: str | None = None, drop: bool = False, force_download: bool = Fals
     files = ensure_csv_files(data_dir, force_download=force_download)
 
     db = MovieDatabase(uri=uri or settings.mongodb_uri)
-    LOGGER.info("Target MongoDB: %s (database '%s')", db.uri, db.db_name)
+    LOGGER.info("Target MongoDB: %s (database '%s')", _mask_uri(db.uri), db.db_name)
     try:
         db.connect()
         counts = import_dataset(db, files["movies.csv"], files["ratings.csv"], drop_existing=drop)

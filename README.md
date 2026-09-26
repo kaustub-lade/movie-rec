@@ -168,6 +168,19 @@ This repository includes `render.yaml`, which configures Render to install the d
 
 Do not set `MONGODB_URI` to `mongodb://localhost:27017/` on Render; that points to the Render container, not your computer.
 
+### Atlas connection troubleshooting
+
+If Render reports `SSL handshake failed`, check these items in order:
+
+- Confirm the Atlas cluster is running and not paused.
+- In Atlas **Network Access**, add `0.0.0.0/0` temporarily for testing, or add the current Render outbound IP ranges for a restricted setup.
+- In Atlas **Database Access**, confirm the database user is active and has read/write access to `movie_recommender`.
+- Copy the Atlas **Drivers** connection string and set it as Render's `MONGODB_URI` secret. URL-encode reserved password characters such as `@`, `:`, `/`, `?`, and `#`.
+- Do not include angle brackets around the username or password, and do not use the local `localhost` URI.
+- After changing the secret, manually redeploy the Render service.
+
+Never paste a MongoDB connection string containing a password into source code, issues, screenshots, or chat. If a password is exposed, delete or rotate that Atlas database user immediately and update Render with the replacement URI.
+
 ### Netlify deployment
 
 Netlify deploys static sites and serverless functions. It does not directly run a persistent Streamlit server or local MongoDB service, so this Streamlit repository produces a Netlify 404 because it has no `index.html` entry point. Use the Render URL as the live application URL, or rewrite the application as a Netlify-compatible frontend and API.
