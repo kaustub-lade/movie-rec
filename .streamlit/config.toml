@@ -1,0 +1,20 @@
+[server]
+headless = true
+port = 8501
+fileWatcherType = "none"
+runOnSave = false
+maxUploadSize = 5
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "dark"
+primaryColor = "#4f8ef7"
+backgroundColor = "#0b0d17"
+secondaryBackgroundColor = "#151829"
+textColor = "#e8e8ef"
+font = "sans serif"
+
+[runner]
+fastReruns = true
